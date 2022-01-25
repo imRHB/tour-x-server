@@ -33,8 +33,22 @@ async function run() {
 
         // GET API
         app.get('/blogs', async (req, res) => {
-            const blogs = await blogCollection.find({}).toArray();
-            res.send(blogs);
+            const cursor = blogCollection.find({});
+            const page = parseInt(req.query.page);
+            const size = parseInt(req.query.size);
+            let blogs;
+            const count = await cursor.count();
+            if (page) {
+                blogs = await cursor.skip(page * size).limit(size).toArray();
+            }
+            else {
+                blogs = await cursor.toArray();
+            }
+            res.send({
+                blogs,
+                count
+            });
+            // console.log(blogs);
         });
 
         // POST API : User
