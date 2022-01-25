@@ -1,7 +1,6 @@
 const express = require('express');
 const { MongoClient } = require('mongodb');
 const cors = require('cors');
-const res = require("express/lib/response");
 require('dotenv').config();
 
 const app = express();
@@ -25,17 +24,52 @@ async function run() {
         const blogCollection = database.collection('blogs');
         const userCollection = database.collection('users');
 
-        const newBlog = {
+        /* const newBlog = {
             title: 'demo - 3',
             description: 'demo - 3 description'
         };
         const result = blogCollection.insertOne(newBlog);
-        res.json(result);
+        res.json(result); */
 
         // GET API
         app.get('/blogs', async (req, res) => {
             const blogs = await blogCollection.find({}).toArray();
-            res.json(blogs);
+            res.send(blogs);
+        });
+
+        // POST API : User
+        app.post('/users', async (req, res) => {
+            const newUser = req.body;
+            const result = userCollection.insertOne(newUser);
+            res.json(result);
+        });
+
+        // PUT API : User
+        app.put('/users', async (req, res) => {
+            const user = req.body;
+            const filter = { email: user.email };
+            const options = { upsert: true };
+            const updateUser = {
+                $set: {
+                    name: user.name,
+                    email: user.email
+                }
+            };
+            const result = await userCollection.updateOne(filter, updateUser, options);
+            res.json(result);
+        });
+
+        // PUT API : Set admin role
+        app.put('/users/admin', async (req, res) => {
+            const user = req.body;
+            const filter = { email: user.email };
+            const updateUser = {
+                $set: {
+                    role: 'admin'
+                }
+            };
+            const result = await userCollection.updateOne(filter, updateUser);
+            res.json(result);
         });
     }
 
