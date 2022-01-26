@@ -1,5 +1,6 @@
 const express = require('express');
 const { MongoClient } = require('mongodb');
+const ObjectId = require('mongodb').ObjectId;
 const cors = require('cors');
 require('dotenv').config();
 
@@ -31,7 +32,7 @@ async function run() {
         const result = blogCollection.insertOne(newBlog);
         res.json(result); */
 
-        // GET API
+        // GET API : Blogs
         app.get('/blogs', async (req, res) => {
             const cursor = blogCollection.find({});
             const page = parseInt(req.query.page);
@@ -51,11 +52,46 @@ async function run() {
             // console.log(blogs);
         });
 
+        // GET API : Single blog
+        app.get('/blogs/:bolgId', async (req, res) => {
+            const bolgId = req.params.bolgId;
+            const query = { _id: ObjectId(bolgId) };
+            const result = await blogCollection.findOne(query);
+            res.json(result);
+        });
+
+        // POST API : Blog
+        app.post('/blogs', async (req, res) => {
+            const newBlog = req.body;
+            const result = await blogCollection.insertOne(newBlog);
+            res.json(result);
+        });
+
         // POST API : User
         app.post('/users', async (req, res) => {
             const newUser = req.body;
             const result = userCollection.insertOne(newUser);
             res.json(result);
+        });
+
+        // PUT API : Update blog status
+        /* app.put('/blogs/:blogId', async (req, res) => {
+            const blogId = req.body.blogId;
+            const filter = { _id: ObjectId(blogId) };
+            const options = { upsert: true };
+            const updateStatus = {
+                $set: {
+                    status: req.body.status
+                }
+            },
+            const result = await blogCollection.updateOne(filter, updateStatus, options);
+            res.json(result);
+            console.log(result);
+        }); */
+        app.put('/blogs/:blogId', async (req, res) => {
+            const blogId = req.params.blogId;
+            const filter = { _id: blogId };
+            console.log(blogId);
         });
 
         // PUT API : User
