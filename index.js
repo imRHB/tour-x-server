@@ -121,6 +121,14 @@ async function run() {
             const result = await userCollection.updateOne(filter, updateUser);
             res.json(result);
         });
+
+        // DELETE API : Blog
+        app.delete('/blogs/:blogId', async (req, res) => {
+            const blogId = req.params.blogId;
+            const query = { _id: ObjectId(blogId) };
+            const result = await blogCollection.deleteOne(query);
+            res.json(result);
+        });
     }
 
     finally {
