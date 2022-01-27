@@ -28,8 +28,8 @@ async function run() {
         const reviewCollection = database.collection('reviews');
 
 
-        // GET API : Blogs
-        app.get('/blogs', async (req, res) => {
+        // GET API : Blogs ACTIVE
+        /* app.get('/blogs', async (req, res) => {
             const cursor = blogCollection.find({});
             const page = parseInt(req.query.page);
             const size = parseInt(req.query.size);
@@ -45,6 +45,14 @@ async function run() {
                 blogs,
                 count
             });
+        }); */
+
+        /* test */
+        app.get('/blogs', async (req, res) => {
+            const query = req.query;
+            const blogs = blogCollection.find(query);
+            const result = await blogs.toArray();
+            res.json(result);
         });
 
         // GET API : Single blog
@@ -54,23 +62,6 @@ async function run() {
             const result = await blogCollection.findOne(query);
             res.json(result);
         });
-
-        // GET API : Blog filter by email
-        /* app.get('/blogs/:email', async (req, res) => {
-            const email = req.params.email;
-            const query = { email: email };
-            const userBlog = blogCollection.find(query);
-            const result = await userBlog.toArray();
-            res.json(result);
-        }); */
-
-        /* app.get('/blogs', async (req, res) => {
-            const email = req.query.email;
-            const query = { email: email };
-            const blogs = blogCollection.find(query);
-            const result = await blogs.toArray();
-            res.json(result);
-        }); */
 
         // POST API : Blog
         app.post('/blogs', async (req, res) => {
@@ -127,6 +118,17 @@ async function run() {
             res.json(result);
         });
 
+        app.get('/users/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email };
+            const user = await userCollection.findOne(query);
+            let isAdmin = false;
+            if (user?.role === 'admin') {
+                isAdmin = true;
+            }
+            res.json({ admin: isAdmin });
+        });
+
         // DELETE API : Blog
         app.delete('/blogs/:blogId', async (req, res) => {
             const blogId = req.params.blogId;
@@ -138,12 +140,13 @@ async function run() {
 
 
         /* testing api */
+        /* active */
         /* app.get('/reviews', async (req, res) => {
             const reviews = await reviewCollection.find({}).toArray();
             res.json(reviews);
         }); */
 
-        app.get('/reviews', async (req, res) => {
+        /* app.get('/reviews', async (req, res) => {
             const cursor = reviewCollection.find({});
             // const page = parseInt(req.query.page);
             // const size = parseInt(req.query.size);
@@ -154,6 +157,14 @@ async function run() {
                 reviews,
                 count
             });
+        }); */
+
+        app.get('/reviews', async (req, res) => {
+            const query = req.query;
+            const reviews = reviewCollection.find(query);
+            const result = await reviews.toArray();
+            res.json(result);
+            console.log(result);
         });
 
         app.put('/reviews/:id', async (req, res) => {
