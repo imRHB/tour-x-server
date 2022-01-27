@@ -26,12 +26,13 @@ async function run() {
         const userCollection = database.collection('users');
 
         const reviewCollection = database.collection('reviews');
+        const tmsCollection = database.collection('tms');
 
 
         // GET API : Blogs ACTIVE
-        /* app.get('/blogs', async (req, res) => {
+        app.get('/blogs', async (req, res) => {
             const cursor = blogCollection.find({});
-            const page = parseInt(req.query.page);
+            const page = req.query.page;
             const size = parseInt(req.query.size);
             let blogs;
             const count = await cursor.count();
@@ -45,15 +46,15 @@ async function run() {
                 blogs,
                 count
             });
-        }); */
+        });
 
         /* test */
-        app.get('/blogs', async (req, res) => {
+        /* app.get('/blogs', async (req, res) => {
             const query = req.query;
             const blogs = blogCollection.find(query);
             const result = await blogs.toArray();
             res.json(result);
-        });
+        }); */
 
         // GET API : Single blog
         app.get('/blogs/:bolgId', async (req, res) => {
@@ -179,6 +180,24 @@ async function run() {
             res.json(result);
         });
 
+        /* testimonials (tms) */
+        app.get('/tms', async (req, res) => {
+            const cursor = tmsCollection.find({});
+            const page = req.query.page;
+            const size = parseInt(req.query.size);
+            const count = await cursor.count();
+            let tms;
+            if (page) {
+                tms = await cursor.skip(page * size).limit(size).toArray();
+            }
+            else {
+                tms = await cursor.toArray();
+            }
+            res.send({
+                count,
+                tms
+            })
+        });
 
     }
 
