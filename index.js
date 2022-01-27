@@ -25,12 +25,8 @@ async function run() {
         const blogCollection = database.collection('blogs');
         const userCollection = database.collection('users');
 
-        /* const newBlog = {
-            title: 'demo - 3',
-            description: 'demo - 3 description'
-        };
-        const result = blogCollection.insertOne(newBlog);
-        res.json(result); */
+        const reviewCollection = database.collection('reviews');
+
 
         // GET API : Blogs
         app.get('/blogs', async (req, res) => {
@@ -49,7 +45,6 @@ async function run() {
                 blogs,
                 count
             });
-            // console.log(blogs);
         });
 
         // GET API : Single blog
@@ -59,6 +54,23 @@ async function run() {
             const result = await blogCollection.findOne(query);
             res.json(result);
         });
+
+        // GET API : Blog filter by email
+        /* app.get('/blogs/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email };
+            const userBlog = blogCollection.find(query);
+            const result = await userBlog.toArray();
+            res.json(result);
+        }); */
+
+        /* app.get('/blogs', async (req, res) => {
+            const email = req.query.email;
+            const query = { email: email };
+            const blogs = blogCollection.find(query);
+            const result = await blogs.toArray();
+            res.json(result);
+        }); */
 
         // POST API : Blog
         app.post('/blogs', async (req, res) => {
@@ -75,23 +87,16 @@ async function run() {
         });
 
         // PUT API : Update blog status
-        /* app.put('/blogs/:blogId', async (req, res) => {
-            const blogId = req.body.blogId;
-            const filter = { _id: ObjectId(blogId) };
-            const options = { upsert: true };
+        app.put('/blogs/:id', async (req, res) => {
+            const id = req.params;
+            const filter = { _id: ObjectId(id) };
             const updateStatus = {
                 $set: {
                     status: req.body.status
                 }
-            },
-            const result = await blogCollection.updateOne(filter, updateStatus, options);
+            };
+            const result = await blogCollection.updateOne(filter, updateStatus);
             res.json(result);
-            console.log(result);
-        }); */
-        app.put('/blogs/:blogId', async (req, res) => {
-            const blogId = req.params.blogId;
-            const filter = { _id: blogId };
-            console.log(blogId);
         });
 
         // PUT API : User
@@ -129,6 +134,41 @@ async function run() {
             const result = await blogCollection.deleteOne(query);
             res.json(result);
         });
+
+
+
+        /* testing api */
+        /* app.get('/reviews', async (req, res) => {
+            const reviews = await reviewCollection.find({}).toArray();
+            res.json(reviews);
+        }); */
+
+        app.get('/reviews', async (req, res) => {
+            const cursor = reviewCollection.find({});
+            // const page = parseInt(req.query.page);
+            // const size = parseInt(req.query.size);
+            let reviews;
+            const count = await cursor.count();
+            reviews = await cursor.toArray();
+            res.send({
+                reviews,
+                count
+            });
+        });
+
+        app.put('/reviews/:id', async (req, res) => {
+            const id = req.params;
+            const filter = { _id: ObjectId(id) };
+            const updateStatus = {
+                $set: {
+                    status: req.body.status
+                }
+            };
+            const result = await reviewCollection.updateOne(filter, updateStatus);
+            res.json(result);
+        });
+
+
     }
 
     finally {
