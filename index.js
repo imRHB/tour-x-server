@@ -25,8 +25,9 @@ async function run() {
         const blogCollection = database.collection('blogs');
         const userCollection = database.collection('users');
 
-        const reviewCollection = database.collection('reviews');
-        const tmsCollection = database.collection('tms');
+        /* testing collection for future implementation */
+        // const reviewCollection = database.collection('reviews');
+        // const tmsCollection = database.collection('tms');
 
 
         // GET API : Blogs ACTIVE
@@ -160,15 +161,17 @@ async function run() {
             });
         }); */
 
-        app.get('/reviews', async (req, res) => {
+        /* testing api */
+        /* app.get('/reviews', async (req, res) => {
             const query = req.query;
             const reviews = reviewCollection.find(query);
             const result = await reviews.toArray();
             res.json(result);
             console.log(result);
-        });
+        }); */
 
-        app.put('/reviews/:id', async (req, res) => {
+        /* testing api */
+        /* app.put('/reviews/:id', async (req, res) => {
             const id = req.params;
             const filter = { _id: ObjectId(id) };
             const updateStatus = {
@@ -178,10 +181,10 @@ async function run() {
             };
             const result = await reviewCollection.updateOne(filter, updateStatus);
             res.json(result);
-        });
+        }); */
 
-        /* testimonials (tms) */
-        app.get('/tms', async (req, res) => {
+        /* testing api : testimonials (tms) */
+        /* app.get('/tms', async (req, res) => {
             const cursor = tmsCollection.find({});
             const page = req.query.page;
             const size = parseInt(req.query.size);
@@ -197,7 +200,7 @@ async function run() {
                 count,
                 tms
             })
-        });
+        }); */
 
     }
 
